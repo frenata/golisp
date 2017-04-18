@@ -50,13 +50,25 @@ func TestIsToken(t *testing.T) {
 }
 
 func TestIsNotToken(t *testing.T) {
-	res, err := ParseLisp("((((((25))))))")
+	res, err := ParseLisp("(1 2 3 4)")
 
 	if err != nil {
 		t.Fatalf("error while testing, failed to parse %s: %s", res, err)
 	}
 
-	if !res.IsToken() {
-		t.Fatalf("%s is not recognized as a token", res)
+	if res.IsToken() {
+		t.Fatalf("%s is incorrectly recognized as a token", res)
+	}
+}
+
+func TestEmptyLisp(t *testing.T) {
+	res, err := ParseLisp("((((((()))))))")
+
+	if err != nil {
+		t.Fatalf("error while testing, failed to parse %s: %s", res, err)
+	}
+
+	if res.String() != "()" {
+		t.Fatalf("%s is not reduced to \"()\"", res)
 	}
 }
