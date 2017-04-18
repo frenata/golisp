@@ -5,15 +5,20 @@ import (
 	"strings"
 )
 
+// A lisp should either be a string or a list of other lisps
+// ie, one of these values should be empty
 type lisp struct {
 	list  []*lisp
 	token string
 }
 
+// NewToken encapsulates a string into a lisp.
 func NewToken(token string) *lisp {
 	return &lisp{nil, token}
 }
 
+// ParseLisp recursively parses a string, returning the lisp represented.
+// If the string does not represent a valid lisp, an error will be returned
 func ParseLisp(str string) (*lisp, error) {
 	l := &lisp{}
 	l.list = make([]*lisp, 0)
@@ -24,6 +29,7 @@ func ParseLisp(str string) (*lisp, error) {
 	}
 
 	token := ""
+	// add the current token to the list and reset the token
 	addToken := func() {
 		if token != "" {
 			l.list = append(l.list, NewToken(token))
@@ -31,39 +37,43 @@ func ParseLisp(str string) (*lisp, error) {
 		}
 	}
 
-	for i := 1; i < len(str); {
+	for i := 1; i < len(str); i++ {
 		c := str[i : i+1]
 		switch c {
-		case " ":
-			addToken()
-			i++
 		case ")":
 			addToken()
 			return l, nil
+		case " ":
+			addToken()
 		default:
 			token += c
-			i++
 		case "(":
-			match := strings.Index(str[i:], ")")
-			if match == -1 {
-				return nil, errors.New("no ')' found")
+			close := strings.Index(str[i:], ")")
+			// below should never occur:
+			if close == -1 {
+				panic("no ')' found even though lisp was validated: " + str)
 			}
 
+			// remove the last character, which should be the closing ')'
 			nest, err := ParseLisp(str[i : len(str)-1])
 			if err != nil {
 				return nil, err
 			}
 
 			l.list = append(l.list, nest)
-			i = i + match
+			i = i + close // skip parsing the nested lisp again
 		}
 	}
+	addToken()
 	return l, nil
 }
 
+// String prints a lisp according to normal standards
+// space separated tokens are surrounded by parens
+// Nested lisps take the place of a token and recursively call this function.
 func (a lisp) String() string {
-	if a.list == nil {
-		return a.token
+	if a.IsToken() {
+		return a.GetToken()
 	} else {
 		str := ""
 		for i, s := range a.list {
@@ -73,22 +83,26 @@ func (a lisp) String() string {
 			}
 			str += s.String() + space
 		}
-
-		if len(a.list) > 1 {
-			str = "(" + str + ")"
-		}
-		return str
+		return "(" + str + ")"
 	}
 }
 
+// IsToken indicates whether the lisp has a token value
 func (a lisp) IsToken() bool {
+	return a.GetToken() != ""
+}
+
+// GetToken retrieves the token value of a lisp. It ignores excessive
+// parens. Thus, (((25))) will return 25.
+func (a lisp) GetToken() string {
 	ls := a
 	for len(ls.list) == 1 {
 		ls = *ls.list[0]
 	}
-	return ls.token != ""
+	return ls.token
 }
 
+// ensures that the parenthesis are properly balanced
 func validateLisp(str string) bool {
 	stack := ""
 

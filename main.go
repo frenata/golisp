@@ -30,6 +30,4 @@ func main() {
 			}
 		}
 	}
-
-	fmt.Println(ParseLisp("(+ 1 2)"))
 }

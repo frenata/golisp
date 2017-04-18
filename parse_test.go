@@ -48,3 +48,15 @@ func TestIsToken(t *testing.T) {
 		t.Fatalf("%s is not recognized as a token", res)
 	}
 }
+
+func TestIsNotToken(t *testing.T) {
+	res, err := ParseLisp("((((((25))))))")
+
+	if err != nil {
+		t.Fatalf("error while testing, failed to parse %s: %s", res, err)
+	}
+
+	if !res.IsToken() {
+		t.Fatalf("%s is not recognized as a token", res)
+	}
+}
