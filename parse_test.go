@@ -6,7 +6,7 @@ import (
 )
 
 func TestParens(t *testing.T) {
-	badParens := []string{"(+ 1", ")(", "((((((", "(()", "((()()()))", ""}
+	badParens := []string{"(+ 1", ")(", "((((((", "(()", "((()())))"}
 
 	for _, s := range badParens {
 		res, err := ParseLisp(s)
@@ -34,5 +34,17 @@ func TestExternalWhitespace(t *testing.T) {
 
 	if fmt.Sprint(actual) != expected {
 		t.Fatalf("whitespace is not properly stripped from %s when parsing, %s should be %s", input, actual, expected)
+	}
+}
+
+func TestIsToken(t *testing.T) {
+	res, err := ParseLisp("((((((25))))))")
+
+	if err != nil {
+		t.Fatalf("error while testing, failed to parse %s: %s", res, err)
+	}
+
+	if !res.IsToken() {
+		t.Fatalf("%s is not recognized as a token", res)
 	}
 }
