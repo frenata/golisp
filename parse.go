@@ -1,20 +1,23 @@
 package main
 
-import "strings"
+import (
+	"errors"
+	"strings"
+)
 
 type lisp struct {
-	list  []lisp
+	list  []*lisp
 	token string
 }
 
-func NewToken(token string) lisp {
-	return lisp{nil, token}
+func NewToken(token string) *lisp {
+	return &lisp{nil, token}
 }
 
-func ParseLisp(str string) lisp {
-	l := lisp{}
+func ParseLisp(str string) (*lisp, error) {
+	l := &lisp{}
 
-	l.list = make([]lisp, 0)
+	l.list = make([]*lisp, 0)
 
 	token := ""
 	for i := 1; i < len(str); i++ {
@@ -25,17 +28,20 @@ func ParseLisp(str string) lisp {
 			token = ""
 		case "(":
 			match := strings.Index(str[i:], ")")
-			l.list = append(l.list, ParseLisp(str[i:i+match+1]))
+			nest, err := ParseLisp(str[i : i+match+1])
+			if err != nil {
+				return nil, err
+			}
+			l.list = append(l.list, nest)
 			i = i + match + 1
 		case ")":
 			l.list = append(l.list, NewToken(token))
-			return l
+			return l, nil
 		default:
 			token += c
 		}
 	}
-
-	return l
+	return nil, errors.New("no ')' found")
 }
 
 func (a lisp) String() string {

@@ -22,8 +22,12 @@ func main() {
 			fmt.Println("Have a nice day!")
 			return
 		default:
-			parsed := ParseLisp(input)
-			fmt.Println(parsed)
+			parsed, err := ParseLisp(input)
+			if err != nil {
+				fmt.Println(err)
+			} else {
+				fmt.Println(parsed)
+			}
 		}
 	}
 
