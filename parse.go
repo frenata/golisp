@@ -22,7 +22,7 @@ func NewToken(token string) *lisp {
 func ParseLisp(str string) (*lisp, error) {
 	l := &lisp{}
 	l.list = make([]*lisp, 0)
-	str = strings.TrimSpace(str)
+	str = strings.TrimSuffix(strings.TrimPrefix(strings.TrimSpace(str), "("), ")")
 
 	if !validateLisp(str) {
 		return nil, errors.New("unbalanced parens")
@@ -37,7 +37,7 @@ func ParseLisp(str string) (*lisp, error) {
 		}
 	}
 
-	for i := 1; i < len(str); i++ {
+	for i := 0; i < len(str); i++ {
 		c := str[i : i+1]
 		switch c {
 		case ")":
@@ -55,7 +55,7 @@ func ParseLisp(str string) (*lisp, error) {
 			}
 
 			// remove the last character, which should be the closing ')'
-			nest, err := ParseLisp(str[i : len(str)-1])
+			nest, err := ParseLisp(str[i:])
 			if err != nil {
 				return nil, err
 			}
