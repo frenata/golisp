@@ -7,11 +7,19 @@ import (
 
 func TestParens(t *testing.T) {
 	badParens := []string{"(+ 1", ")(", "((((((", "(()", "((()())))"}
+	goodParens := []string{"(1 (2 3) (4 5))"}
 
 	for _, s := range badParens {
 		_, err := ParseLisp(s)
 		if err == nil {
 			t.Fatalf("Parsing %s did not produce an error", s)
+		}
+	}
+
+	for _, s := range goodParens {
+		_, err := ParseLisp(s)
+		if err != nil {
+			t.Fatalf("Parsing %s produced an error", s)
 		}
 	}
 }

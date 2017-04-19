@@ -25,3 +25,11 @@ func TestRecursiveAddition(t *testing.T) {
 		t.Fatal("1 + 2 + 3 + 4 != 10")
 	}
 }
+
+func TestRecursiveSubtract(t *testing.T) {
+	a, _ := ParseLisp("(- 1 (- 2 (- 3 4)))")
+
+	if evaluate(a) != "-2" {
+		t.Fatal("(- 1 (- 2 (- 3 4))) != -2")
+	}
+}
