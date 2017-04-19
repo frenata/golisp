@@ -33,3 +33,11 @@ func TestRecursiveSubtract(t *testing.T) {
 		t.Fatal("(- 1 (- 2 (- 3 4))) != -2")
 	}
 }
+
+func TestHead(t *testing.T) {
+	a, _ := ParseLisp("(head (4 5 6))")
+
+	if evaluate(a) != "4" {
+		t.Fatal("head fails")
+	}
+}

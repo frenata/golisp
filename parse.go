@@ -23,13 +23,13 @@ func ParseLisp(str string) (*lisp, error) {
 	l := &lisp{}
 	l.list = make([]*lisp, 0)
 
+	if !validateLisp(str) {
+		return nil, errors.New("unbalanced parens")
+	}
+
 	str = strings.TrimSpace(str)
 	if strings.HasPrefix(str, "(") && strings.HasSuffix(str, ")") {
 		str = str[1 : len(str)-1]
-	}
-
-	if !validateLisp(str) {
-		return nil, errors.New("unbalanced parens")
 	}
 
 	token := ""
