@@ -1,6 +1,6 @@
 package golisp
 
-type operator func(list []*lisp) string
+type operator func(list []*lisp) *lisp
 
 var operators map[string]operator
 
@@ -14,11 +14,11 @@ func init() {
 	}
 }
 
-func Evaluate(a *lisp) string {
+func Evaluate(a *lisp) *lisp {
 	if a.IsToken() {
-		return a.GetToken()
+		return a
 	} else if a.IsBlank() {
-		return a.String()
+		return a
 	}
 
 	op := a.list[0].GetToken()
@@ -28,7 +28,7 @@ func Evaluate(a *lisp) string {
 	var ok bool
 
 	if result, ok = operators[op]; !ok {
-		return a.String()
+		return a
 	}
 
 	//fmt.Println(result(list))
