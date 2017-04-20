@@ -38,6 +38,15 @@ func TestRecursiveSubtract(t *testing.T) {
 	}
 }
 
+func TestArithmetic(t *testing.T) {
+	a, _ := Parse("(/ 56 (+ 1 (* 9 (+ 1 2))))")
+
+	if Evaluate(a) != "2" {
+		t.Log(Evaluate(a))
+		t.Fatal("(/ 56 (+ 1 (* 9 (+ 1 2)))) != 2")
+	}
+}
+
 func TestHead(t *testing.T) {
 	a, _ := Parse("(head (4 5 6))")
 

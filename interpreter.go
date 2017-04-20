@@ -1,6 +1,18 @@
 package golisp
 
-import "strconv"
+type operator func(list []*lisp) string
+
+var operators map[string]operator
+
+func init() {
+	operators = map[string]operator{
+		"+":    plus,
+		"-":    minus,
+		"head": head,
+		"*":    multiply,
+		"/":    divide,
+	}
+}
 
 func Evaluate(a *lisp) string {
 	if a.IsToken() {
@@ -9,34 +21,16 @@ func Evaluate(a *lisp) string {
 		return a.String()
 	}
 
-	switch a.list[0].GetToken() {
-	case "+":
-		arg1 := Evaluate(a.list[1])
-		arg2 := Evaluate(a.list[2])
+	op := a.list[0].GetToken()
+	list := a.list[1:]
 
-		int1, _ := strconv.Atoi(arg1)
-		int2, _ := strconv.Atoi(arg2)
+	var result operator
+	var ok bool
 
-		return strconv.Itoa(int1 + int2)
-
-	case "-":
-		arg1 := Evaluate(a.list[1])
-		arg2 := Evaluate(a.list[2])
-
-		int1, _ := strconv.Atoi(arg1)
-		int2, _ := strconv.Atoi(arg2)
-
-		return strconv.Itoa(int1 - int2)
-
-	case "head":
-		arg1, _ := Parse(Evaluate(a.list[1]))
-		if len(arg1.list) > 0 {
-			return Evaluate(arg1.list[0])
-		} else {
-			return arg1.String()
-		}
-
-	default:
+	if result, ok = operators[op]; !ok {
 		return a.String()
 	}
+
+	//fmt.Println(result(list))
+	return result(list)
 }
