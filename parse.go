@@ -1,4 +1,4 @@
-package main
+package golisp
 
 import (
 	"errors"
@@ -17,9 +17,9 @@ func NewToken(token string) *lisp {
 	return &lisp{nil, token}
 }
 
-// ParseLisp recursively parses a string, returning the lisp represented.
+// Parse recursively parses a string, returning the lisp represented.
 // If the string does not represent a valid lisp, an error will be returned
-func ParseLisp(str string) (*lisp, error) {
+func Parse(str string) (*lisp, error) {
 	l := &lisp{}
 	l.list = make([]*lisp, 0)
 
@@ -63,7 +63,7 @@ func ParseLisp(str string) (*lisp, error) {
 			}
 
 			// remove the last character, which should be the closing ')'
-			nest, err := ParseLisp(str[i:])
+			nest, err := Parse(str[i:])
 			if err != nil {
 				return nil, err
 			}

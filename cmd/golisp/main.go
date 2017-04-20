@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"os"
 	"strings"
+
+	"github.com/frenata/golisp"
 )
 
 // REPL like client
@@ -26,11 +28,11 @@ func main() {
 			fmt.Println("Have a nice day!")
 			return
 		default:
-			parsed, err := ParseLisp(input)
+			parsed, err := golisp.Parse(input)
 			if err != nil {
 				fmt.Println(err)
 			} else {
-				fmt.Println(evaluate(parsed))
+				fmt.Println(golisp.Evaluate(parsed))
 			}
 		}
 	}
