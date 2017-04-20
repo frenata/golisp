@@ -24,6 +24,9 @@ func mapfunc(list []*lisp) (*lisp, error) {
 	if err != nil {
 		return nil, err
 	}
+	if oldlist.IsToken() { // allows for something like (map inc 4)
+		return apply(op, opName, []*lisp{oldlist})
+	}
 
 	newlist := ""
 	for _, a := range oldlist.list {
