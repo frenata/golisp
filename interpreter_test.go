@@ -54,3 +54,18 @@ func TestHead(t *testing.T) {
 		t.Fatal("head fails")
 	}
 }
+
+func TestBadArgs(t *testing.T) {
+	badArgsLisps := make([]*lisp, 4)
+	badArgsLisps[0], _ = Parse("(+ 1)")
+	badArgsLisps[1], _ = Parse("(head 4 5 6)")
+	badArgsLisps[2], _ = Parse("(- 4 (* 4))")
+	badArgsLisps[3], _ = Parse("(+ for go)")
+
+	for _, bad := range badArgsLisps {
+		res, err := Evaluate(bad)
+		if err == nil {
+			t.Fatalf("%s did not produce an evaluation error, instead: %s", bad, res)
+		}
+	}
+}
