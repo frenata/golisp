@@ -22,8 +22,8 @@ func NewToken(token string) *lisp {
 func Parse(str string) (*lisp, error) {
 	//fmt.Println(str)
 	str = strings.TrimSpace(str)
-	l := &lisp{}
-	l.list = make([]*lisp, 0)
+	a := &lisp{}
+	a.list = make([]*lisp, 0)
 
 	if !validateLisp(str) {
 		return nil, errors.New("unbalanced parens")
@@ -33,9 +33,16 @@ func Parse(str string) (*lisp, error) {
 	// add the current token to the list and reset the token
 	addToken := func() {
 		if token != "" {
-			l.list = append(l.list, NewToken(token))
+			a.list = append(a.list, NewToken(token))
 			token = ""
 		}
+	}
+
+	cleanParens := func(a *lisp) *lisp {
+		for len(a.list) == 1 {
+			a = a.list[0]
+		}
+		return a
 	}
 
 	i := 0
@@ -47,7 +54,7 @@ func Parse(str string) (*lisp, error) {
 		switch c {
 		case ")":
 			addToken()
-			return l, nil
+			return cleanParens(a), nil
 		case " ":
 			addToken()
 		default:
@@ -65,12 +72,13 @@ func Parse(str string) (*lisp, error) {
 				return nil, err
 			}
 
-			l.list = append(l.list, nest)
+			a.list = append(a.list, nest)
 			i = i + close + 1 // skip parsing the nested lisp again
 		}
 	}
 	addToken()
-	return l, nil
+
+	return cleanParens(a), nil
 }
 
 // String prints a lisp according to normal standards

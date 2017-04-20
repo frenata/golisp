@@ -89,3 +89,13 @@ func TestEmptyLisp(t *testing.T) {
 		t.Fatalf("%s is not reduced to \"()\"", res)
 	}
 }
+
+func TestExtraParensAroundLists(t *testing.T) {
+	input := "(((4 5 6)))"
+	actual, _ := Parse(input)
+	expected := "(4 5 6)"
+
+	if actual.String() != expected {
+		t.Fatalf("%s did not parse into %s, instead: %s", input, expected, actual)
+	}
+}
