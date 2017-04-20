@@ -6,6 +6,8 @@ import (
 	"strconv"
 )
 
+type operator func(list []*lisp) (*lisp, error)
+
 func plus(list []*lisp) (*lisp, error) {
 	if len(list) != 2 {
 		return nil, errors.New("expects 2 arguments")

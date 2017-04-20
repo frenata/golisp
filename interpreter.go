@@ -5,8 +5,6 @@ import (
 	"fmt"
 )
 
-type operator func(list []*lisp) (*lisp, error)
-
 var operators map[string]operator
 
 func init() {
@@ -19,6 +17,8 @@ func init() {
 	}
 }
 
+// Evaluate recursively evaluates lisps until it finds single value tokens,
+// then executes the operators in the lisps
 func Evaluate(a *lisp) (*lisp, error) {
 	if a.IsToken() || a.IsBlank() {
 		return a, nil

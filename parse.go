@@ -137,3 +137,18 @@ func validateLisp(str string) bool {
 	}
 	return stack == ""
 }
+
+// finds the matching close parens
+func findMatchedClose(str string) int {
+	stack := ""
+	for i, c := range str {
+		if c == '(' {
+			stack += "("
+		} else if c == ')' && strings.HasSuffix(stack, "(") {
+			stack = stack[:len(stack)-1]
+		} else if c == ')' {
+			return i
+		}
+	}
+	return -1
+}
