@@ -14,6 +14,9 @@ func init() {
 		"head": head,
 		"*":    multiply,
 		"/":    divide,
+		"inc":  increment,
+		"dec":  decrement,
+		"map":  mapfunc,
 	}
 }
 
@@ -24,20 +27,29 @@ func Evaluate(a *lisp) (*lisp, error) {
 		return a, nil
 	}
 
-	op := a.list[0].GetToken()
-	list := a.list[1:]
+	opName := a.list[0].GetToken()
+	op := getOperator(opName)
+	if op == nil { // if no operator defined, return lisp unevaluated
+		return a, nil
+	}
 
+	return apply(op, opName, a.list[1:])
+}
+
+func getOperator(op string) operator {
 	var function operator
 	var ok bool
 
 	if function, ok = operators[op]; !ok {
-		return a, nil
+		return nil
 	}
+	return function
+}
 
-	result, err := function(list)
+func apply(op operator, name string, list []*lisp) (*lisp, error) {
+	result, err := op(list)
 	if err != nil {
-		return nil, errors.New(fmt.Sprintf("operator \"%s\" %s", op, err))
+		return nil, errors.New(fmt.Sprintf("operator \"%s\" %s", name, err))
 	}
 	return result, nil
-
 }

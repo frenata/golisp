@@ -8,6 +8,30 @@ import (
 
 type operator func(list []*lisp) (*lisp, error)
 
+// binary operators
+func mapfunc(list []*lisp) (*lisp, error) {
+	if len(list) != 2 {
+		return nil, errors.New("expects 2 arguments")
+	}
+
+	opName := list[0].GetToken()
+	op := getOperator(opName)
+	if op == nil {
+		return nil, errors.New("expects a valid operator as the 1st argument")
+	}
+
+	newlisp := ""
+	for _, a := range list[1].list {
+		result, err := apply(op, opName, []*lisp{a})
+		if err != nil {
+			return nil, err
+		}
+		newlisp += result.String() + " "
+	}
+
+	return Parse(newlisp)
+}
+
 func plus(list []*lisp) (*lisp, error) {
 	if len(list) != 2 {
 		return nil, errors.New("expects 2 arguments")
@@ -72,6 +96,7 @@ func divide(list []*lisp) (*lisp, error) {
 	return NewToken(strconv.Itoa(int1 / int2)), nil
 }
 
+// unary operators
 func head(list []*lisp) (*lisp, error) {
 	if len(list) != 1 {
 		return nil, errors.New("expects 1 argument")
@@ -85,6 +110,28 @@ func head(list []*lisp) (*lisp, error) {
 	} else {
 		return arg1, nil
 	}
+}
+
+func increment(list []*lisp) (*lisp, error) {
+	if len(list) != 1 {
+		return nil, errors.New("expects 1 argument")
+	}
+	int1, err := lispToInt(list[0])
+	if err != nil {
+		return nil, err
+	}
+	return NewToken(strconv.Itoa(int1 + 1)), nil
+}
+
+func decrement(list []*lisp) (*lisp, error) {
+	if len(list) != 1 {
+		return nil, errors.New("expects 1 argument")
+	}
+	int1, err := lispToInt(list[0])
+	if err != nil {
+		return nil, err
+	}
+	return NewToken(strconv.Itoa(int1 - 1)), nil
 }
 
 func lispToInt(a *lisp) (int, error) {
