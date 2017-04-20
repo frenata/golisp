@@ -6,6 +6,7 @@ func TestEvalToken(t *testing.T) {
 	a, _ := Parse("24")
 
 	if res, _ := Evaluate(a); res.String() != "24" {
+		t.Log(Evaluate(a))
 		t.Fatal("24 is not 24")
 	}
 }
@@ -22,6 +23,7 @@ func TestRecursiveAddition(t *testing.T) {
 	a, err := Parse("(+ 1 (+ 2 (+ 3 4)))")
 
 	if err != nil {
+		t.Log(a, err)
 		t.Fatal(err)
 	}
 

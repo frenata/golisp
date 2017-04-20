@@ -20,6 +20,7 @@ func NewToken(token string) *lisp {
 // Parse recursively parses a string, returning the lisp represented.
 // If the string does not represent a valid lisp, an error will be returned
 func Parse(str string) (*lisp, error) {
+	//fmt.Println(str)
 	l := &lisp{}
 	l.list = make([]*lisp, 0)
 
@@ -31,9 +32,9 @@ func Parse(str string) (*lisp, error) {
 	//if strings.HasPrefix(str, "(") && strings.HasSuffix(str, ")") {
 	//	str = str[1 : len(str)-1]
 	//}
-	if strings.HasPrefix(str, "(") && strings.HasSuffix(str, ")") {
-		str = str[1 : len(str)-1]
-	}
+	/*if strings.HasPrefix(str, "(") {
+		str = str[1:]
+	}*/
 
 	token := ""
 	// add the current token to the list and reset the token
@@ -44,7 +45,11 @@ func Parse(str string) (*lisp, error) {
 		}
 	}
 
-	for i := 0; i < len(str); i++ {
+	i := 0
+	if strings.HasPrefix(str, "(") {
+		i = 1
+	}
+	for ; i < len(str); i++ {
 		c := str[i : i+1]
 		switch c {
 		case ")":
@@ -56,14 +61,15 @@ func Parse(str string) (*lisp, error) {
 			token += c
 		case "(":
 			// TODO: need to write a function that will find the real closing parens
-			close := strings.Index(str[i:], ")")
+			//close := strings.Index(str[i:], ")")
+			close := findMatchedClose(str[i+1:])
 			// below should never occur:
 			if close == -1 {
 				panic("no ')' found even though lisp was validated: " + str)
 			}
 
 			// remove the last character, which should be the closing ')'
-			nest, err := Parse(str[i:])
+			nest, err := Parse(str[i+1 : i+close+1])
 			if err != nil {
 				return nil, err
 			}
