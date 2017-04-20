@@ -38,13 +38,6 @@ func Parse(str string) (*lisp, error) {
 		}
 	}
 
-	cleanParens := func(a *lisp) *lisp {
-		for len(a.list) == 1 {
-			a = a.list[0]
-		}
-		return a
-	}
-
 	i := 0
 	if strings.HasPrefix(str, "(") {
 		i = 1
@@ -154,4 +147,11 @@ func findMatchedClose(str string) int {
 		}
 	}
 	return -1
+}
+
+func cleanParens(a *lisp) *lisp {
+	for len(a.list) == 1 {
+		a = a.list[0]
+	}
+	return a
 }
