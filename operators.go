@@ -20,16 +20,21 @@ func mapfunc(list []*lisp) (*lisp, error) {
 		return nil, errors.New("expects a valid operator as the 1st argument")
 	}
 
-	newlisp := ""
-	for _, a := range list[1].list {
+	oldlist, err := Evaluate(list[1])
+	if err != nil {
+		return nil, err
+	}
+
+	newlist := ""
+	for _, a := range oldlist.list {
 		result, err := apply(op, opName, []*lisp{a})
 		if err != nil {
 			return nil, err
 		}
-		newlisp += result.String() + " "
+		newlist += result.String() + " "
 	}
 
-	return Parse(newlisp)
+	return Parse(newlist)
 }
 
 func plus(list []*lisp) (*lisp, error) {

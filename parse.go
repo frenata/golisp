@@ -21,20 +21,13 @@ func NewToken(token string) *lisp {
 // If the string does not represent a valid lisp, an error will be returned
 func Parse(str string) (*lisp, error) {
 	//fmt.Println(str)
+	str = strings.TrimSpace(str)
 	l := &lisp{}
 	l.list = make([]*lisp, 0)
 
 	if !validateLisp(str) {
 		return nil, errors.New("unbalanced parens")
 	}
-
-	str = strings.TrimSpace(str)
-	//if strings.HasPrefix(str, "(") && strings.HasSuffix(str, ")") {
-	//	str = str[1 : len(str)-1]
-	//}
-	/*if strings.HasPrefix(str, "(") {
-		str = str[1:]
-	}*/
 
 	token := ""
 	// add the current token to the list and reset the token
@@ -60,22 +53,20 @@ func Parse(str string) (*lisp, error) {
 		default:
 			token += c
 		case "(":
-			// TODO: need to write a function that will find the real closing parens
-			//close := strings.Index(str[i:], ")")
 			close := findMatchedClose(str[i+1:])
 			// below should never occur:
 			if close == -1 {
 				panic("no ')' found even though lisp was validated: " + str)
 			}
 
-			// remove the last character, which should be the closing ')'
-			nest, err := Parse(str[i+1 : i+close+1])
+			//fmt.Println("nested parse:", str[i:i+close+2])
+			nest, err := Parse(str[i : i+close+2]) // Why +2?
 			if err != nil {
 				return nil, err
 			}
 
 			l.list = append(l.list, nest)
-			i = i + close // skip parsing the nested lisp again
+			i = i + close + 1 // skip parsing the nested lisp again
 		}
 	}
 	addToken()
@@ -128,11 +119,9 @@ func (a *lisp) IsBlank() bool {
 // ensures that the parenthesis are properly balanced
 func validateLisp(str string) bool {
 	stack := ""
-	//fmt.Println(str)
 	for _, s := range str {
 		if s == '(' {
 			stack += "("
-			//fmt.Println(stack)
 		} else if s == ')' {
 			if strings.HasSuffix(stack, "(") {
 				stack = stack[:len(stack)-1]

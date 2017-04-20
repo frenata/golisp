@@ -55,6 +55,13 @@ func TestHead(t *testing.T) {
 	if res, _ := Evaluate(a); res.String() != "4" {
 		t.Fatal("head fails")
 	}
+
+	a, _ = Parse("(head ((1 2) (3 4)))")
+
+	if res, _ := Evaluate(a); res.String() != "(1 2)" {
+		t.Log(a, res)
+		t.Fatal("head fails")
+	}
 }
 
 func TestIncDec(t *testing.T) {
@@ -84,6 +91,24 @@ func TestSimpleMap(t *testing.T) {
 	input, err := Parse("(map inc (1 2 3))")
 	t.Log(input, err)
 	expected := "(2 3 4)"
+
+	if actual, _ := Evaluate(input); actual == nil || actual.String() != expected {
+		t.Fatalf("%s did not evalute to %s, instead %s", input, expected, actual)
+	}
+
+	input, err = Parse("(map head ((1 2) (3 4)))")
+	t.Log(input, err)
+	expected = "(1 3)"
+
+	if actual, _ := Evaluate(input); actual == nil || actual.String() != expected {
+		t.Fatalf("%s did not evalute to %s, instead %s", input, expected, actual)
+	}
+}
+
+func TestNestedMap(t *testing.T) {
+	input, err := Parse("(map inc (map head ((99 55 66) (3 4 5) (1 1 1 1 1))))")
+	t.Log(input, err)
+	expected := "(100 4 2)"
 
 	if actual, _ := Evaluate(input); actual == nil || actual.String() != expected {
 		t.Fatalf("%s did not evalute to %s, instead %s", input, expected, actual)
