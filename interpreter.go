@@ -1,6 +1,11 @@
 package golisp
 
-type operator func(list []*lisp) *lisp
+import (
+	"errors"
+	"fmt"
+)
+
+type operator func(list []*lisp) (*lisp, error)
 
 var operators map[string]operator
 
@@ -14,23 +19,25 @@ func init() {
 	}
 }
 
-func Evaluate(a *lisp) *lisp {
-	if a.IsToken() {
-		return a
-	} else if a.IsBlank() {
-		return a
+func Evaluate(a *lisp) (*lisp, error) {
+	if a.IsToken() || a.IsBlank() {
+		return a, nil
 	}
 
 	op := a.list[0].GetToken()
 	list := a.list[1:]
 
-	var result operator
+	var function operator
 	var ok bool
 
-	if result, ok = operators[op]; !ok {
-		return a
+	if function, ok = operators[op]; !ok {
+		return a, nil
 	}
 
-	//fmt.Println(result(list))
-	return result(list)
+	result, err := function(list)
+	if err != nil {
+		return nil, errors.New(fmt.Sprintf("operator \"%s\" %s", op, err))
+	}
+	return result, nil
+
 }

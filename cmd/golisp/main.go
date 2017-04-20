@@ -12,7 +12,6 @@ import (
 // REPL like client
 // The user can enter a lisp, it will be parsed into a AST
 // Now: the AST will be printed, in lisp style
-// TODO: instead of just printing the AST, evaluate it
 func main() {
 	cli := bufio.NewReader(os.Stdin)
 	for {
@@ -30,10 +29,15 @@ func main() {
 		default:
 			parsed, err := golisp.Parse(input)
 			if err != nil {
-				fmt.Println(err)
-			} else {
-				fmt.Println(golisp.Evaluate(parsed))
+				fmt.Println("parse error:", err)
+				continue
 			}
+			value, err := golisp.Evaluate(parsed)
+			if err != nil {
+				fmt.Println("evaluate error:", err)
+				continue
+			}
+			fmt.Println(value)
 		}
 	}
 }
