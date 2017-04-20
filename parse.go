@@ -28,6 +28,9 @@ func ParseLisp(str string) (*lisp, error) {
 	}
 
 	str = strings.TrimSpace(str)
+	//if strings.HasPrefix(str, "(") && strings.HasSuffix(str, ")") {
+	//	str = str[1 : len(str)-1]
+	//}
 	if strings.HasPrefix(str, "(") && strings.HasSuffix(str, ")") {
 		str = str[1 : len(str)-1]
 	}
@@ -52,6 +55,7 @@ func ParseLisp(str string) (*lisp, error) {
 		default:
 			token += c
 		case "(":
+			// TODO: need to write a function that will find the real closing parens
 			close := strings.Index(str[i:], ")")
 			// below should never occur:
 			if close == -1 {
@@ -110,13 +114,19 @@ func (a lisp) GetToken() string {
 	return ls.token
 }
 
+// is the lisp just parens?
+func (a *lisp) IsBlank() bool {
+	return a.String() == "()"
+}
+
 // ensures that the parenthesis are properly balanced
 func validateLisp(str string) bool {
 	stack := ""
-
+	//fmt.Println(str)
 	for _, s := range str {
 		if s == '(' {
 			stack += "("
+			//fmt.Println(stack)
 		} else if s == ')' {
 			if strings.HasSuffix(stack, "(") {
 				stack = stack[:len(stack)-1]

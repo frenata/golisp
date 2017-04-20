@@ -5,6 +5,8 @@ import "strconv"
 func evaluate(a *lisp) string {
 	if a.IsToken() {
 		return a.GetToken()
+	} else if a.IsBlank() {
+		return a.String()
 	}
 
 	switch a.list[0].GetToken() {
@@ -28,7 +30,11 @@ func evaluate(a *lisp) string {
 
 	case "head":
 		arg1, _ := ParseLisp(evaluate(a.list[1]))
-		return evaluate(arg1.list[0])
+		if len(arg1.list) > 0 {
+			return evaluate(arg1.list[0])
+		} else {
+			return arg1.String()
+		}
 
 	default:
 		return a.String()

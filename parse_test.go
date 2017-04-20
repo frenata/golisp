@@ -7,7 +7,7 @@ import (
 
 func TestParens(t *testing.T) {
 	badParens := []string{"(+ 1", ")(", "((((((", "(()", "((()())))"}
-	goodParens := []string{"(1 (2 3) (4 5))"}
+	goodParens := []string{"(1 (2 3) (4 5))", "(head ()(()()))"}
 
 	for _, s := range badParens {
 		_, err := ParseLisp(s)

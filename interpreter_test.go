@@ -19,7 +19,11 @@ func TestAddition(t *testing.T) {
 }
 
 func TestRecursiveAddition(t *testing.T) {
-	a, _ := ParseLisp("(+ 1 (+ 2 (+ 3 4)))")
+	a, err := ParseLisp("(+ 1 (+ 2 (+ 3 4)))")
+
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	if evaluate(a) != "10" {
 		t.Fatal("1 + 2 + 3 + 4 != 10")
