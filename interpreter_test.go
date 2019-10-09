@@ -162,5 +162,10 @@ func TestInterpreterEarlyReturn(t *testing.T) {
 	op := interpreter.getOperator(input)
 	if op != nil {
 		t.Fatal("getOperator didn't short-circuit when there was an error already")
+
+	}
+	result := interpreter.apply(plus, "foo", []*lisp{nil})
+	if result != nil {
+		t.Fatal("getOperator didn't short-circuit when there was an error already")
 	}
 }
