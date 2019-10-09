@@ -14,6 +14,7 @@ import (
 // Now: the AST will be printed, in lisp style
 func main() {
 	cli := bufio.NewReader(os.Stdin)
+	interpreter := golisp.Interpreter{}
 	for {
 		fmt.Print("golisp> ")
 
@@ -32,9 +33,9 @@ func main() {
 				fmt.Println("parse error:", err)
 				continue
 			}
-			value, err := golisp.Evaluate(parsed)
-			if err != nil {
-				fmt.Println("evaluate error:", err)
+			value := interpreter.Evaluate(parsed)
+			if interpreter.Err() != nil {
+				fmt.Println("evaluate error:", interpreter.Err())
 				continue
 			}
 			fmt.Println(value)
