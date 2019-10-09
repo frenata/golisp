@@ -20,23 +20,37 @@ func init() {
 	}
 }
 
+type Interpreter struct {
+	err error
+}
+
+func (i *Interpreter) Err() error {
+	return i.err
+}
+
 // Evaluate recursively evaluates lisps until it finds single value tokens,
 // then executes the operators in the lisps
-func Evaluate(a *lisp) (*lisp, error) {
+func (i *Interpreter) Evaluate(a *lisp) *lisp {
+	if i.err != nil {
+		return nil
+	}
 	if a.IsToken() || a.IsBlank() {
-		return a, nil
+		return a
 	}
 
 	opName := a.list[0].GetToken()
-	op := getOperator(opName)
+	op := i.getOperator(opName)
 	if op == nil { // if no operator defined, return lisp unevaluated
-		return a, nil
+		return a
 	}
 
-	return apply(op, opName, a.list[1:])
+	return i.apply(op, opName, a.list[1:])
 }
 
-func getOperator(op string) operator {
+func (i *Interpreter) getOperator(op string) operator {
+	if i.err != nil {
+		return nil
+	}
 	var function operator
 	var ok bool
 
@@ -46,10 +60,14 @@ func getOperator(op string) operator {
 	return function
 }
 
-func apply(op operator, name string, list []*lisp) (*lisp, error) {
+func (i *Interpreter) apply(op operator, name string, list []*lisp) *lisp {
+	if i.err != nil {
+		return nil
+	}
 	result, err := op(list)
 	if err != nil {
-		return nil, errors.New(fmt.Sprintf("operator \"%s\" %s", name, err))
+		i.err = errors.New(fmt.Sprintf("operator \"%s\" %s", name, err))
+		return nil
 	}
-	return result, nil
+	return result
 }
