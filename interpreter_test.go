@@ -134,3 +134,21 @@ func TestMapError(t *testing.T) {
 		t.Fatalf("%s failed to produce an error", input)
 	}
 }
+
+func TestGetOperatorSuccess(t *testing.T) {
+	interpreter := Interpreter{}
+	input := "+"
+	op := interpreter.getOperator(input)
+	if op == nil {
+		t.Fatalf("%s failed to be recognized as an operator", input)
+	}
+}
+
+func TestGetOperatorFailure(t *testing.T) {
+	interpreter := Interpreter{}
+	input := "o"
+	op := interpreter.getOperator(input)
+	if op != nil {
+		t.Fatalf("%s improperly recognized as an operator", input)
+	}
+}
