@@ -31,11 +31,12 @@ func mapfunc(list []*lisp) (*lisp, error) {
 		result := interpreter.apply(op, opName, []*lisp{a})
 		newlist += result.String() + " "
 	}
-	if interpreter.err != nil {
-		return nil, interpreter.err
-	}
 
-	return Parse(newlist)
+	parsed, err := Parse(newlist)
+	if interpreter.err != nil {
+		err = interpreter.err
+	}
+	return parsed, err
 }
 
 func plus(list []*lisp) (*lisp, error) {
