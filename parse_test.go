@@ -30,7 +30,7 @@ func TestInternalWhitespace(t *testing.T) {
 	actual, _ := Parse(input)
 
 	if fmt.Sprint(actual) != expected {
-		t.Fatal("whitespace is not properly stripped from %s when parsing, %s should be %s", input, actual, expected)
+		t.Fatalf("whitespace is not properly stripped from %s when parsing, %s should be %s", input, actual, expected)
 	}
 }
 
