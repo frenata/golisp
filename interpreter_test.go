@@ -1,6 +1,9 @@
 package golisp
 
-import "testing"
+import (
+	"errors"
+	"testing"
+)
 
 func TestEvalToken(t *testing.T) {
 	interpreter := Interpreter{}
@@ -150,5 +153,14 @@ func TestGetOperatorFailure(t *testing.T) {
 	op := interpreter.getOperator(input)
 	if op != nil {
 		t.Fatalf("%s improperly recognized as an operator", input)
+	}
+}
+
+func TestInterpreterEarlyReturn(t *testing.T) {
+	interpreter := Interpreter{err: errors.New("foo")}
+	input := "+"
+	op := interpreter.getOperator(input)
+	if op != nil {
+		t.Fatal("getOperator didn't short-circuit when there was an error already")
 	}
 }
