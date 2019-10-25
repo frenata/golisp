@@ -49,7 +49,7 @@ func getOperator(op string) operator {
 func apply(op operator, name string, list []*lisp) (*lisp, error) {
 	result, err := op(list)
 	if err != nil {
-		return nil, errors.New(fmt.Sprintf("operator \"%s\" %s", name, err))
+		return nil, errors.New(fmt.Sprintf("operaor \"%s\" %s", name, err))
 	}
 	return result, nil
 }
